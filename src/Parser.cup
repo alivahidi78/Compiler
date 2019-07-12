@@ -1,5 +1,7 @@
 import java_cup.runtime.*;
+import java.util.ArrayList;
 import classes.*;
+import classes.function.*;
 
 parser code {:
     // Connect this parser to a scanner!
@@ -57,16 +59,40 @@ func_extern ::= func_dcl:e {: RESULT = e;:}
             ;
 
 func_dcl ::=  FUNCTION type:e1 IDENTIFIER:e2 LPAREN RPAREN SEMICOLON
+              {:RESULT = new FuncDcl((String)e1, (String)e2,new ArrayList<Argument>(), null);:}
             | FUNCTION type:e1 IDENTIFIER:e2 LPAREN RPAREN block:e3
+              {:RESULT = new FuncDcl((String)e1, (String)e2,new ArrayList<Argument>(), (Block)e3);:}
             | FUNCTION type:e1 IDENTIFIER:e2 LPAREN arguments:e3 RPAREN SEMICOLON
+              {:RESULT = new FuncDcl((String)e1, (String)e2, (ArrayList<Argument>)e3,null);:}
             | FUNCTION type:e1 IDENTIFIER:e2 LPAREN arguments:e3 RPAREN block:e4
+              {:RESULT = new FuncDcl((String)e1, (String)e2, (ArrayList<Argument>)e3, (Block)e4);:}
             ;
 
 extern_dcl ::= EXTERN type IDENTIFIER;
 
-arguments ::= type IDENTIFIER argument_helper | type IDENTIFIER argument_helper COMMA arguments;
+arguments ::= type:e1 IDENTIFIER:e2 argument_helper:e3
+              {: ArrayList<Argument> a = new ArrayList <>() ;
+                a.add(new Argument((String)e1, (String)e2,(Integer)e3)); RESULT = a ; :}
+            | arguments:e1 COMMA type:e2 IDENTIFIER:e3 argument_helper:e4
+              {:RESULT = ((ArrayList<Argument>)e1)
+                .add(new Argument((String)e2, (String)e3,(Integer)e4));:}
+            ;
 
-type ::= INT|BOOL|FLOAT|LONG|CHAR|DOUBLE|IDENTIFIER|STRING|VOID|AUTO;
+argument_helper ::=  argument_helper square_brackets | ;
+
+square_brackets ::= LBRACK RBRACK;
+
+type ::= INT:e        {:RESULT = e;:}
+        |BOOL:e       {:RESULT = e;:}
+        |FLOAT:e      {:RESULT = e;:}
+        |LONG:e       {:RESULT = e;:}
+        |CHAR:e       {:RESULT = e;:}
+        |DOUBLE:e     {:RESULT = e;:}
+        |IDENTIFIER:e {:RESULT = e;:}
+        |STRING:e     {:RESULT = e;:}
+        |VOID:e       {:RESULT = e;:}
+        |AUTO:e       {:RESULT = e;:}
+        ;
 
 struct_dec ::= RECORD IDENTIFIER BEGIN var_dcls END RECORD;
 
@@ -121,9 +147,5 @@ conditional ::= EQEQ | LTEQ | GTEQ | NOTEQ | GT | LT | LOGICAL_AND | LOGICAL_OR 
 const_val ::= INTEGER_LITERAL | LONG_LITERAL | FLOAT_LITERAL | DOUBLE_LITERAL | BOOLEAN_LITERAL | CHARACTER_LITERAL | STRING_LITERAL;
 
 var_dcl_cnts ::= COMMA var_dcl_cnt | var_dcl_cnts COMMA var_dcl_cnt;
-
-argument_helper ::=  argument_helper square_brackets | ;
-
-square_brackets ::= LBRACK RBRACK;
 
 filled_brackets ::= LBRACK expr RBRACK filled_brackets | LBRACK expr RBRACK ;
