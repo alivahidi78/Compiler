@@ -2,6 +2,9 @@ import java_cup.runtime.*;
 import java.util.ArrayList;
 import classes.*;
 import classes.function.*;
+import classes.declarations.*;
+import classes.expr.*;
+import java.util.Collections;
 
 parser code {:
     // Connect this parser to a scanner!
@@ -18,7 +21,7 @@ terminal            BREAK, CASE,CHAR,CONST,CONTINUE,DEFAULT,DOUBLE,ELSE,END,EXTE
                     LBRACE,RBRACE,LBRACK,RBRACK,SEMICOLON,COMMA,DOT,EQ,GT,LT,COLON,EQEQ,LTEQ,GTEQ,NOTEQ,PLUS,PLUSPLUS,MINUSMINUS,MINUS,MULT,DIV,BITWISE_AND,BITWISE_OR,XOR,MOD,PLUSEQ,MINUSEQ,MULTEQ,DIVEQ,LOGICAL_AND,VOID,AUTO,OF,TILDA,LOGICAL_OR,BOOL,BEGIN,REPEAT,UNTIL,FOREACH,IN,UMINUS,DUMMY;
 
 terminal Integer INTEGER_LITERAL;
-terminal Long  LONG_LITERAL;
+terminal Long LONG_LITERAL;
 terminal Float FLOAT_LITERAL;
 terminal Double DOUBLE_LITERAL;
 terminal Boolean BOOLEAN_LITERAL;
@@ -68,7 +71,7 @@ func_dcl ::=  FUNCTION type:e1 IDENTIFIER:e2 LPAREN RPAREN SEMICOLON
               {:RESULT = new FuncDcl((String)e1, (String)e2, (ArrayList<Argument>)e3, (Block)e4);:}
             ;
 
-extern_dcl ::= EXTERN type IDENTIFIER;
+extern_dcl ::= EXTERN type IDENTIFIER SEMICOLON;
 
 arguments ::= type:e1 IDENTIFIER:e2 argument_helper:e3
               {: ArrayList<Argument> a = new ArrayList <>() ;
@@ -78,7 +81,8 @@ arguments ::= type:e1 IDENTIFIER:e2 argument_helper:e3
                 .add(new Argument((String)e2, (String)e3,(Integer)e4));:}
             ;
 
-argument_helper ::=  argument_helper square_brackets | ;
+argument_helper ::=  argument_helper:e square_brackets {:RESULT = ((Integer)e)+1;:}
+                    | {:RESULT = Integer.valueOf(0);:} ;
 
 square_brackets ::= LBRACK RBRACK;
 
@@ -94,17 +98,49 @@ type ::= INT:e        {:RESULT = e;:}
         |AUTO:e       {:RESULT = e;:}
         ;
 
-struct_dec ::= RECORD IDENTIFIER BEGIN var_dcls END RECORD;
+struct_dec ::= RECORD IDENTIFIER:e1 BEGIN var_dcls:e2 END SEMICOLON
+               {:RESULT = new Struct((String) e1,(ArrayList<VarDcl>)e2);:};
 
-var_dcls ::= var_dcls var_dcl | var_dcl;
-
-var_dcl ::= CONST type var_dcl_cnt |
-            CONST type var_dcl_cnt var_dcl_cnts |
-            type var_dcl_cnt |
-            type var_dcl_cnt var_dcl_cnts
+var_dcls ::= var_dcls:e1 var_dcl:e2 {:ArrayList<VarDcl> dcls = (ArrayList<VarDcl>) e1;
+                                        dcls.add((VarDcl) e2);
+                                        RESULT = dcls;:}
+            | var_dcl:e1            {:ArrayList<VarDcl> dcls = new ArrayList<>();
+                                        dcls.add((VarDcl) e1);
+                                        RESULT = dcls;:}
             ;
 
-var_dcl_cnt ::= variable | variable EQ expr;
+var_dcl ::= CONST type:e1 var_dcl_cnt:e2
+            {: ArrayList<VarDclPart> a = new ArrayList<>();
+               a.add((VarDclPart) e2);
+               RESULT = new VarDcl(true,(String)e1,a);:}
+            |CONST type:e1 var_dcl_cnt:e2 var_dcl_cnts:e3
+            {: ArrayList<VarDclPart> a = (ArrayList<VarDclPart>) e3;
+               a.add((VarDclPart) e2);
+               Collections.reverse(a);
+               RESULT = new VarDcl(true,(String)e1,a);:}
+            |type:e1 var_dcl_cnt:e2
+            {: ArrayList<VarDclPart> a = new ArrayList<>();
+               a.add((VarDclPart) e2);
+               RESULT = new VarDcl(false,(String)e1,a);:}
+            |type:e1 var_dcl_cnt:e2 var_dcl_cnts:e3
+            {: ArrayList<VarDclPart> a = (ArrayList<VarDclPart>) e3;
+               a.add((VarDclPart) e2);
+               Collections.reverse(a);
+               RESULT = new VarDcl(false,(String)e1,a);:}
+            ;
+
+var_dcl_cnts ::= COMMA var_dcl_cnt:e
+                {:ArrayList<VarDclPart> a = new ArrayList<>();
+                  a.add((VarDclPart)e);
+                  RESULT = a;:}
+                | var_dcl_cnts:e1 COMMA var_dcl_cnt:e2
+                {:ArrayList<VarDclPart> a = (ArrayList<VarDclPart>) e1;
+                  a.add((VarDclPart)e2);
+                  RESULT = a;:}
+                ;
+
+var_dcl_cnt ::= IDENTIFIER:e1 {:RESULT = new VarDclPart((String)e1,null);:}
+                | IDENTIFIER:e1 EQ expr:e2 {:RESULT = new VarDclPart((String)e1,(Expr)e2);:};
 
 block ::= BEGIN block_content END;
 
@@ -134,7 +170,18 @@ loop_stmt ::= FOR LPAREN assignment SEMICOLON expr SEMICOLON assignment RPAREN b
              |FOREACH LPAREN IDENTIFIER IN IDENTIFIER RPAREN block
              ;
 
-expr ::= expr binary_op expr| LPAREN expr RPAREN| method_call | variable |const_val| MINUS expr %prec UMINUS| TILDA expr| SIZEOF LPAREN type RPAREN | variable MINUSMINUS %prec DUMMY | MINUSMINUS variable | PLUSPLUS variable | variable PLUSPLUS %prec DUMMY ;
+expr ::= expr binary_op expr
+        | LPAREN expr RPAREN
+        | method_call
+        | variable
+        |const_val
+        | MINUS expr %prec UMINUS
+        | TILDA expr
+        | SIZEOF LPAREN type RPAREN
+        | variable MINUSMINUS %prec DUMMY
+        | MINUSMINUS variable
+        | PLUSPLUS variable
+        | variable PLUSPLUS %prec DUMMY ;
 
 variable ::= IDENTIFIER |IDENTIFIER filled_brackets| variable DOT IDENTIFIER  ;
 
@@ -145,7 +192,5 @@ arithmatic ::= PLUS | MINUS | MULT | DIV | MOD | BITWISE_AND | BITWISE_OR | XOR;
 conditional ::= EQEQ | LTEQ | GTEQ | NOTEQ | GT | LT | LOGICAL_AND | LOGICAL_OR ;
 
 const_val ::= INTEGER_LITERAL | LONG_LITERAL | FLOAT_LITERAL | DOUBLE_LITERAL | BOOLEAN_LITERAL | CHARACTER_LITERAL | STRING_LITERAL;
-
-var_dcl_cnts ::= COMMA var_dcl_cnt | var_dcl_cnts COMMA var_dcl_cnt;
 
 filled_brackets ::= LBRACK expr RBRACK filled_brackets | LBRACK expr RBRACK ;
