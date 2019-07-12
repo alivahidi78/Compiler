@@ -1010,8 +1010,10 @@ class CUP$Parser$actions {
 		int e4left = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
 		int e4right = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
 		Object e4 = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		RESULT = ((ArrayList<Argument>)e1)
-                .add(new Argument((String)e2, (String)e3,(Integer)e4));
+		
+                ArrayList<Argument> a = ((ArrayList<Argument>)e1);
+                a.add(new Argument((String)e2, (String)e3,(Integer)e4));
+                RESULT = a;
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("arguments",4, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;

@@ -77,8 +77,10 @@ arguments ::= type:e1 IDENTIFIER:e2 argument_helper:e3
               {: ArrayList<Argument> a = new ArrayList <>() ;
                 a.add(new Argument((String)e1, (String)e2,(Integer)e3)); RESULT = a ; :}
             | arguments:e1 COMMA type:e2 IDENTIFIER:e3 argument_helper:e4
-              {:RESULT = ((ArrayList<Argument>)e1)
-                .add(new Argument((String)e2, (String)e3,(Integer)e4));:}
+              {:
+                ArrayList<Argument> a = ((ArrayList<Argument>)e1);
+                a.add(new Argument((String)e2, (String)e3,(Integer)e4));
+                RESULT = a;:}
             ;
 
 argument_helper ::=  argument_helper:e square_brackets {:RESULT = ((Integer)e)+1;:}
