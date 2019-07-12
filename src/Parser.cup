@@ -111,35 +111,18 @@ var_dcls ::= var_dcls:e1 var_dcl:e2 {:ArrayList<VarDcl> dcls = (ArrayList<VarDcl
                                         RESULT = dcls;:}
             ;
 
-var_dcl ::= CONST type:e1 var_dcl_cnt:e2
-            {: ArrayList<VarDclPart> a = new ArrayList<>();
-               a.add((VarDclPart) e2);
-               RESULT = new VarDcl(true,(String)e1,a);:}
-            |CONST type:e1 var_dcl_cnt:e2 var_dcl_cnts:e3
-            {: ArrayList<VarDclPart> a = (ArrayList<VarDclPart>) e3;
-               a.add((VarDclPart) e2);
-               Collections.reverse(a);
-               RESULT = new VarDcl(true,(String)e1,a);:}
-            |type:e1 var_dcl_cnt:e2
-            {: ArrayList<VarDclPart> a = new ArrayList<>();
-               a.add((VarDclPart) e2);
-               RESULT = new VarDcl(false,(String)e1,a);:}
-            |type:e1 var_dcl_cnt:e2 var_dcl_cnts:e3
-            {: ArrayList<VarDclPart> a = (ArrayList<VarDclPart>) e3;
-               a.add((VarDclPart) e2);
-               Collections.reverse(a);
-               RESULT = new VarDcl(false,(String)e1,a);:}
+var_dcl ::= CONST type:e1 var_dcl_cnt:e2 var_dcl_cnts:e3 SEMICOLON
+        {:ArrayList <VarDclPart> a = (ArrayList <VarDclPart>) e3;
+        a.add((VarDclPart)e2); Collections.reverse(a); RESULT = new VarDcl(true,(String)e1,a);:}
+            |type:e1 var_dcl_cnt:e2 var_dcl_cnts:e3 SEMICOLON
+        {:ArrayList <VarDclPart> a = (ArrayList <VarDclPart>) e3;
+        a.add((VarDclPart)e2); Collections.reverse(a); RESULT = new VarDcl(false,(String)e1,a);:}
             ;
-
-var_dcl_cnts ::= COMMA var_dcl_cnt:e
-                {:ArrayList<VarDclPart> a = new ArrayList<>();
-                  a.add((VarDclPart)e);
-                  RESULT = a;:}
-                | var_dcl_cnts:e1 COMMA var_dcl_cnt:e2
-                {:ArrayList<VarDclPart> a = (ArrayList<VarDclPart>) e1;
-                  a.add((VarDclPart)e2);
-                  RESULT = a;:}
-                ;
+var_dcl_cnts ::=	COMMA var_dcl_cnt:e1 var_dcl_cnts:e2
+                {: ArrayList <VarDclPart> a = (ArrayList <VarDclPart>) e2;
+                    a.add((VarDclPart)e1); RESULT = a ; :}
+			|	{: RESULT = new ArrayList <VarDclPart>() ; :}
+			;
 
 var_dcl_cnt ::= IDENTIFIER:e1 {:RESULT = new VarDclPart((String)e1,null);:}
                 | IDENTIFIER:e1 EQ expr:e2 {:RESULT = new VarDclPart((String)e1,(Expr)e2);:};
