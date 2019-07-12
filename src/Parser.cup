@@ -1,0 +1,129 @@
+import java_cup.runtime.*;
+import classes.*;
+
+parser code {:
+    // Connect this parser to a scanner!
+    Scanner s;
+    Parser(Scanner s){ this.s=s; }
+:}
+
+/* define how to connect to the scanner! */
+//init with {: s.init(); :};
+scan with {: return s.next_token(); :};
+
+/* Terminals (tokens returned by the scanner). */
+terminal            BREAK, CASE,CHAR,CONST,CONTINUE,DEFAULT,DOUBLE,ELSE,END,EXTERN,FUNCTION,FLOAT,FOR,IF,INT,LONG,RETURN,RECORD,SIZEOF,STRING,SWITCH,NULL_LITERAL,LPAREN,RPAREN,
+                    LBRACE,RBRACE,LBRACK,RBRACK,SEMICOLON,COMMA,DOT,EQ,GT,LT,COLON,EQEQ,LTEQ,GTEQ,NOTEQ,PLUS,PLUSPLUS,MINUSMINUS,MINUS,MULT,DIV,BITWISE_AND,BITWISE_OR,XOR,MOD,PLUSEQ,MINUSEQ,MULTEQ,DIVEQ,LOGICAL_AND,VOID,AUTO,OF,TILDA,LOGICAL_OR,BOOL,BEGIN,REPEAT,UNTIL,FOREACH,IN,UMINUS,DUMMY;
+
+terminal Integer INTEGER_LITERAL;
+terminal Long  LONG_LITERAL;
+terminal Float FLOAT_LITERAL;
+terminal Double DOUBLE_LITERAL;
+terminal Boolean BOOLEAN_LITERAL;
+terminal Character CHARACTER_LITERAL;
+terminal String IDENTIFIER,STRING_LITERAL;
+
+/* Non terminals */
+non terminal  program,func_extern,func_dcl,extern_dcl,arguments,type,struct_dec,var_dcl,var_dcl_cnt,block,statement,assignment,method_call,cond_stmt,var_dcls
+              ,loop_stmt,expr,variable,binary_op,arithmatic,conditional,const_val,filled_brackets,square_brackets,argument_helper,var_dcl_cnts,cases,parameters,short_form_operator,block_content;
+
+/* Precedences */
+precedence right DUMMY;
+precedence right EQ;
+precedence left LOGICAL_AND, LOGICAL_OR;
+precedence left BITWISE_OR;
+precedence left XOR;
+precedence left BITWISE_AND;
+precedence left EQEQ, NOTEQ;
+precedence left LTEQ,LT, GTEQ, GT;
+precedence left PLUS, MINUS;
+precedence left MULT, DIV, MOD;
+precedence right TILDA;
+precedence left UMINUS;
+precedence left DOT ;
+precedence left LBRACK, RBRACK, LPAREN ,RPAREN;
+
+
+/* The grammar rules */
+
+program ::= program:e1 var_dcl:e2       {:RESULT = ((Program)e1).add((Part)e2);:}
+        | program:e1 func_extern:e2     {:RESULT = ((Program)e1).add((Part)e2);:}
+        | program:e1 struct_dec:e2      {:RESULT = ((Program)e1).add((Part)e2);:}
+        |                               {:RESULT = new Program();:}
+        ;
+
+func_extern ::= func_dcl:e {: RESULT = e;:}
+            | extern_dcl:e {: RESULT = e;:}
+            ;
+
+func_dcl ::=  FUNCTION type:e1 IDENTIFIER:e2 LPAREN RPAREN SEMICOLON
+            | FUNCTION type:e1 IDENTIFIER:e2 LPAREN RPAREN block:e3
+            | FUNCTION type:e1 IDENTIFIER:e2 LPAREN arguments:e3 RPAREN SEMICOLON
+            | FUNCTION type:e1 IDENTIFIER:e2 LPAREN arguments:e3 RPAREN block:e4
+            ;
+
+extern_dcl ::= EXTERN type IDENTIFIER;
+
+arguments ::= type IDENTIFIER argument_helper | type IDENTIFIER argument_helper COMMA arguments;
+
+type ::= INT|BOOL|FLOAT|LONG|CHAR|DOUBLE|IDENTIFIER|STRING|VOID|AUTO;
+
+struct_dec ::= RECORD IDENTIFIER BEGIN var_dcls END RECORD;
+
+var_dcls ::= var_dcls var_dcl | var_dcl;
+
+var_dcl ::= CONST type var_dcl_cnt |
+            CONST type var_dcl_cnt var_dcl_cnts |
+            type var_dcl_cnt |
+            type var_dcl_cnt var_dcl_cnts
+            ;
+
+var_dcl_cnt ::= variable | variable EQ expr;
+
+block ::= BEGIN block_content END;
+
+block_content ::= block_content var_dcl | block_content statement | ;
+
+statement ::= assignment SEMICOLON  | method_call SEMICOLON | cond_stmt | loop_stmt | RETURN expr SEMICOLON | RETURN SEMICOLON | BREAK SEMICOLON | CONTINUE SEMICOLON;
+
+assignment ::= variable short_form_operator expr;
+
+short_form_operator ::= EQ | PLUSEQ | MINUSEQ | MULTEQ | DIVEQ ;
+
+method_call ::= IDENTIFIER LPAREN RPAREN | IDENTIFIER LPAREN parameters RPAREN;
+
+parameters ::= expr | expr COMMA parameters ;
+
+cond_stmt ::= IF LPAREN expr RPAREN block | IF LPAREN expr RPAREN block ELSE block |
+              SWITCH LPAREN IDENTIFIER RPAREN OF COLON BEGIN cases DEFAULT COLON block END;
+
+cases ::= cases CASE INT INTEGER_LITERAL COLON block | ;
+
+loop_stmt ::= FOR LPAREN assignment SEMICOLON expr SEMICOLON assignment RPAREN block
+             |FOR LPAREN assignment SEMICOLON expr SEMICOLON expr RPAREN block
+             |FOR LPAREN assignment SEMICOLON expr SEMICOLON RPAREN block
+             |FOR LPAREN SEMICOLON expr SEMICOLON assignment RPAREN block
+             |FOR LPAREN SEMICOLON expr SEMICOLON expr RPAREN block
+             |REPEAT block UNTIL LPAREN expr RPAREN SEMICOLON
+             |FOREACH LPAREN IDENTIFIER IN IDENTIFIER RPAREN block
+             ;
+
+expr ::= expr binary_op expr| LPAREN expr RPAREN| method_call | variable |const_val| MINUS expr %prec UMINUS| TILDA expr| SIZEOF LPAREN type RPAREN | variable MINUSMINUS %prec DUMMY | MINUSMINUS variable | PLUSPLUS variable | variable PLUSPLUS %prec DUMMY ;
+
+variable ::= IDENTIFIER |IDENTIFIER filled_brackets| variable DOT IDENTIFIER  ;
+
+binary_op ::= arithmatic | conditional;
+
+arithmatic ::= PLUS | MINUS | MULT | DIV | MOD | BITWISE_AND | BITWISE_OR | XOR;
+
+conditional ::= EQEQ | LTEQ | GTEQ | NOTEQ | GT | LT | LOGICAL_AND | LOGICAL_OR ;
+
+const_val ::= INTEGER_LITERAL | LONG_LITERAL | FLOAT_LITERAL | DOUBLE_LITERAL | BOOLEAN_LITERAL | CHARACTER_LITERAL | STRING_LITERAL;
+
+var_dcl_cnts ::= COMMA var_dcl_cnt | var_dcl_cnts COMMA var_dcl_cnt;
+
+argument_helper ::=  argument_helper square_brackets | ;
+
+square_brackets ::= LBRACK RBRACK;
+
+filled_brackets ::= LBRACK expr RBRACK filled_brackets | LBRACK expr RBRACK ;
