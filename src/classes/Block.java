@@ -5,7 +5,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import java.util.ArrayList;
 
-public class Block implements Part {
+public class Block extends Part {
     public Block(ArrayList<Operation> operations) {
         //TODO
     }

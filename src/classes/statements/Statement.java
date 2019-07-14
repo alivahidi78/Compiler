@@ -1,6 +1,6 @@
 package classes.statements;
 
-import classes.Part;
+import classes.Operation;
 
-public abstract class Statement implements Part {
+public abstract class Statement extends Operation {
 }

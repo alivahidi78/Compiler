@@ -4,7 +4,7 @@ import classes.Part;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
-public class ExternDcl implements Part {
+public class ExternDcl extends Part {
     public ExternDcl(String type, String name) {
         //TODO
     }

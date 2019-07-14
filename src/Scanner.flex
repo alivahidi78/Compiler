@@ -87,8 +87,7 @@ SingleCharacter = [^\r\n\'\\]
 <YYINITIAL> {
 
   /* keywords */
-  "Begin"
-  "bool"
+  "begin"                        { return symbol(sym.BEGIN); }
   "break"                        { return symbol(sym.BREAK); }
   "case"                         { return symbol(sym.CASE); }
   "char"                         { return symbol(sym.CHAR); }

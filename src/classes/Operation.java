@@ -1,4 +1,4 @@
 package classes;
 
-public interface Operation extends Part {
+public abstract class Operation extends Part {
 }

@@ -1,12 +1,12 @@
 package classes.declarations;
 
-import classes.Part;
+import classes.Operation;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.ArrayList;
 
-public class VarDcl implements Part {
+public class VarDcl extends Operation {
     @Override
     public void compile(MethodVisitor mv, ClassVisitor cv) {
         //TODO

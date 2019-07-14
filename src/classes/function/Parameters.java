@@ -7,7 +7,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import java.util.ArrayList;
 
-public class Parameters implements Part {
+public class Parameters extends Part {
     @Override
     public void compile(MethodVisitor mv, ClassVisitor cv) {
         //TODO

@@ -6,7 +6,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import java.util.ArrayList;
 
-public class Struct implements Part {
+public class Struct extends Part {
     @Override
     public void compile(MethodVisitor mv, ClassVisitor cv) {
         //TODO
