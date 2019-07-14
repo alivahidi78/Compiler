@@ -84,7 +84,9 @@ func_dcl ::=  FUNCTION type:e1 IDENTIFIER:e2 LPAREN RPAREN SEMICOLON
               {:RESULT = new FuncDcl((String)e1, (String)e2, (ArrayList<Argument>)e3, (Block)e4);:}
             ;
 
-extern_dcl ::= EXTERN type IDENTIFIER SEMICOLON;
+extern_dcl ::= EXTERN type:e1 IDENTIFIER:e2 SEMICOLON
+              {:RESULT = new ExternDcl((String)e1,(String)e2);:}
+            ;
 
 arguments ::= type:e1 IDENTIFIER:e2 argument_helper:e3
               {: ArrayList<Argument> a = new ArrayList <>() ;
