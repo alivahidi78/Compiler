@@ -7,13 +7,21 @@ import org.objectweb.asm.MethodVisitor;
 
 import java.util.ArrayList;
 
-public class Parameters extends Part {
-    @Override
-    public void compile(MethodVisitor mv, ClassVisitor cv) {
-        //TODO
+public class Parameters{
+    private ArrayList <Expr> expressions = new ArrayList<Expr>();
+
+    public Parameters(Expr exp, ArrayList<Expr> expressions){
+        this.expressions = expressions;
+        this.expressions.add(exp);
     }
 
-    public void add(Expr e) {
+    public Parameters(Expr ... exps){
+        for (Expr e : exps){
+            expressions.add(e);
+        }
+    }
 
+    public ArrayList<Expr> getExpressions() {
+        return expressions;
     }
 }

@@ -1,0 +1,10 @@
+function int main()
+begin 
+int a;
+a = test(2);
+end
+
+function test(int num)
+begin 
+return num;
+end

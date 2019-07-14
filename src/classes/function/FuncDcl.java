@@ -91,4 +91,8 @@ public class FuncDcl extends Part {
     public String getSignature() {
         return signature;
     }
+
+    public Type[] getArgTypes() {
+        return argTypes;
+    }
 }
