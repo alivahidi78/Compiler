@@ -1,3 +1,4 @@
+import classes.Help.Constants;
 import classes.Program;
 
 import java.io.FileReader;
@@ -7,6 +8,6 @@ public class Main {
         Parser p = new Parser(new Scanner(new FileReader("input.txt")));
         Object result = p.parse().value;
         Program program = (Program) result;
-        program.compile();
+        program.compile(Constants.COMPILE_PATH);
     }
 }
