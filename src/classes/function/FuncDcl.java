@@ -48,7 +48,7 @@ public class FuncDcl extends Part {
         MethodVisitor newMv = cv.visitMethod(ACC_PUBLIC + ACC_STATIC,
                 name, this.signature, null, null);
         newMv.visitCode();
-        newMv.visitVarInsn(ILOAD, 1);
+        newMv.visitInsn(ICONST_0);
         newMv.visitInsn(IRETURN);
         newMv.visitMaxs(1, 1);
         newMv.visitEnd();

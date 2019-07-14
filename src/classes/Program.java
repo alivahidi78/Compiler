@@ -22,7 +22,7 @@ import static org.objectweb.asm.Opcodes.*;
 public class Program {
     private ArrayList<Part> parts = new ArrayList<>();
 
-    public void compile(String to) throws FileNotFoundException {
+    public void compile() throws FileNotFoundException {
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         TraceClassVisitor cv = new TraceClassVisitor(cw, new PrintWriter(Paths.
                 get(Constants.COMPILE_PATH, Constants.DEFAULT_MAIN_CLASS_NAME + ".txt").toFile()));
@@ -83,7 +83,8 @@ public class Program {
         byte[] bytes = cw.toByteArray();
 
         try {
-            Files.write(Paths.get(to, Constants.DEFAULT_MAIN_CLASS_NAME + ".class"), bytes);
+            Files.write(Paths.get(Constants.COMPILE_PATH,
+                    Constants.DEFAULT_MAIN_CLASS_NAME + ".class"), bytes);
         } catch (IOException e) {
             e.printStackTrace();
         }
