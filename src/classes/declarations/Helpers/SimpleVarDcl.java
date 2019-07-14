@@ -3,7 +3,9 @@ package classes.declarations.Helpers;
 import classes.DSCPs.Descriptor;
 import classes.DSCPs.DynamicDscp;
 import classes.DSCPs.GlobalDscp;
+import classes.Frame;
 import classes.expr.Expr;
+import classes.help.SymbolTable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -22,9 +24,9 @@ public class SimpleVarDcl extends Declaration {
 
     @Override
     public void compile(MethodVisitor mv, ClassVisitor cv) {
-        Descriptor d;
+        Descriptor descriptor;
         if (isGlobal) {
-            d = new GlobalDscp(isConst, type, name);
+            descriptor = new GlobalDscp(isConst, type, name);
             if (expr != null)
                 throw new RuntimeException("Global variable cannot be initialized");
             if (isConst)
@@ -34,15 +36,15 @@ public class SimpleVarDcl extends Declaration {
                     getType().getDescriptor(), null, null);
             fv.visitEnd();
         } else {
-            d = new DynamicDscp(isConst, type, name, 0
-//                    SymbolTable.getInstance().returnNewIndex() TODO
-            );
-            DynamicDscp dd = (DynamicDscp) d;
+            Frame frame = SymbolTable.getInstance().getLastFrame();
+            frame.setCurrent_index(frame.getCurrent_index() + 1);
+            descriptor = new DynamicDscp(isConst, type, name, frame.getCurrent_index());
+            DynamicDscp dd = (DynamicDscp) descriptor;
             if (expr != null && expr.getType().equals(getType())) {
                 expr.compile(mv, cv);
                 mv.visitVarInsn(getType().getOpcode(ISTORE), dd.getIndex());
             }
         }
-//        SymbolTable.getInstance().addVariable(name,d); //TODO
+        SymbolTable.getInstance().addVariable(descriptor);
     }
 }

@@ -7,22 +7,21 @@ import java.util.ArrayList;
 
 public class Frame {
     private ArrayList<Descriptor> descriptors = new ArrayList<>();
-    private int current_index = 0;
-    private Label start;
-    private Label end;
+    private int current_index;
+    private Label startLabel;
+    private Label endLabel;
     private ScopeType scopeType;
+
+    public Frame(int current_index, ScopeType scopeType) {
+        this.current_index = current_index;
+        this.startLabel = new Label();
+        this.endLabel = new Label();
+        this.scopeType = scopeType;
+    }
 
 
     public int getCurrent_index() {
         return current_index;
-    }
-
-    public Label getStart() {
-        return start;
-    }
-
-    public Label getEnd() {
-        return end;
     }
 
     public ScopeType getScopeType() {
@@ -33,15 +32,27 @@ public class Frame {
         this.current_index = current_index;
     }
 
-    public void setStart(Label start) {
-        this.start = start;
-    }
-
-    public void setEnd(Label end) {
-        this.end = end;
-    }
-
     public void addDSCP(Descriptor descriptor){
         descriptors.add(descriptor);
+    }
+
+    public ArrayList<Descriptor> getDescriptors() {
+        return descriptors;
+    }
+
+    public Label getStartLabel() {
+        return startLabel;
+    }
+
+    public Label getEndLabel() {
+        return endLabel;
+    }
+
+    public void setStartLabel(Label startLabel) {
+        this.startLabel = startLabel;
+    }
+
+    public void setEndLabel(Label endLabel) {
+        this.endLabel = endLabel;
     }
 }

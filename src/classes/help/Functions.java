@@ -76,4 +76,35 @@ public class Functions {
             throw new Exception("Cannot cast " + type1 + " to " + type2);
         }
     }
+
+    public int getSize(String name) throws Exception {
+        int size;
+        switch (name) {
+            case "int":
+                size = Integer.SIZE;
+                break;
+            case "long":
+                size = Long.SIZE;
+                break;
+            case "char":
+                size = Character.SIZE;
+                break;
+            case "bool":
+                size = 1;
+                break;
+            case "double":
+                size = Double.SIZE;
+                break;
+            case "float":
+                size = Float.SIZE;
+                break;
+            case "string":
+                size = Integer.SIZE;
+                break;
+            default:
+                throw new Exception("type is not valid");
+
+        }
+        return size;
+    }
 }

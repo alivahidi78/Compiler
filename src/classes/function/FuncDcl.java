@@ -2,8 +2,14 @@ package classes.function;
 
 import classes.Block;
 import classes.Part;
+import classes.ScopeType;
+import classes.declarations.Helpers.SimpleVarDcl;
+import classes.declarations.VarDcl;
+import classes.expr.variables.SimpleVar;
 import classes.help.Functions;
 import classes.help.SymbolTable;
+import classes.statements.Return;
+import jdk.internal.org.objectweb.asm.Opcodes;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -20,6 +26,7 @@ public class FuncDcl extends Part {
     private Type[] argTypes;
     private ArrayList<Argument> args;
     private Block block;
+    public ArrayList <Return> returns = new ArrayList<Return>();
 
     public FuncDcl(String type, String name, ArrayList<Argument> args, Block block) {
         this.type = Functions.toType(type);
@@ -48,10 +55,24 @@ public class FuncDcl extends Part {
         MethodVisitor newMv = cv.visitMethod(ACC_PUBLIC + ACC_STATIC,
                 name, this.signature, null, null);
         newMv.visitCode();
-        newMv.visitInsn(ICONST_0);
-        newMv.visitInsn(IRETURN);
+        SymbolTable.getInstance().addFrame(ScopeType.FUNCTION);
+        SymbolTable.getInstance().setLastFunc(this);
+        for (Argument f : args){
+                SimpleVarDcl v = new SimpleVarDcl(false,false,f.getType(),f.getName(),null);
+                v.compile(newMv,cv);
+        }
+
+        block.compile(newMv,cv);
+        if(returns.size() == 0){
+            if (type.equals(org.objectweb.asm.Type.VOID_TYPE)){
+                newMv.visitInsn(Opcodes.RETURN);
+            }else{
+                throw new RuntimeException("no return type seen");
+            }
+        }
         newMv.visitMaxs(1, 1);
         newMv.visitEnd();
+        SymbolTable.getInstance().getFrameStack().pop();
 
     }
 
