@@ -19,7 +19,7 @@ public abstract class Descriptor {
         return isConst;
     }
 
-    public Descriptor(Type type, String name, boolean isConst) {
+    public Descriptor(boolean isConst, Type type, String name) {
         this.type = type;
         this.name = name;
         this.isConst = isConst;

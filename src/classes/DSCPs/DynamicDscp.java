@@ -5,9 +5,11 @@ import org.objectweb.asm.Type;
 public class DynamicDscp extends Descriptor {
     private int index;
 
-    public DynamicDscp(Type type, String name, boolean isConst) {
-        super(type, name, isConst);
+    public DynamicDscp(boolean isConst, Type type, String name, int index) {
+        super(isConst, type, name);
+        this.index = index;
     }
+
 
     public int getIndex() {
         return index;

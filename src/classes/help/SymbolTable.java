@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SymbolTable {
+
+    private boolean isCurrentScopeGlobal = true;//TODO handle
     private static SymbolTable instance = new SymbolTable();
     private HashMap<String, List<FuncDcl>> functions = new HashMap<>();
 
@@ -16,6 +18,10 @@ public class SymbolTable {
     }
 
     private SymbolTable() {
+    }
+
+    public boolean isCurrentScopeGlobal() {
+        return isCurrentScopeGlobal;
     }
 
     public FuncDcl getFunction(String name, Type[] args) {
