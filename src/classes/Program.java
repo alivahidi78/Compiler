@@ -1,7 +1,7 @@
 package classes;
 
-import classes.Help.Constants;
-import classes.Help.SymbolTable;
+import classes.help.Constants;
+import classes.help.SymbolTable;
 import classes.declarations.Struct;
 import classes.declarations.VarDcl;
 import classes.function.FuncDcl;

@@ -1,4 +1,4 @@
-package classes.Help;
+package classes.help;
 
 import org.objectweb.asm.Type;
 

@@ -1,4 +1,4 @@
-package classes.Help;
+package classes.help;
 
 import java.nio.file.Paths;
 

@@ -1,7 +1,7 @@
 package classes.function;
 
 import classes.Block;
-import classes.Help.Functions;
+import classes.help.Functions;
 import classes.Part;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;

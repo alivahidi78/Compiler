@@ -1,4 +1,4 @@
-import classes.Help.Constants;
+import classes.help.Constants;
 import classes.Program;
 
 import java.io.FileReader;
