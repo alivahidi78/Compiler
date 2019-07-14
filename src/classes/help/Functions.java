@@ -77,7 +77,7 @@ public class Functions {
         }
     }
 
-    public int getSize(String name) throws Exception {
+    public static int getSize(String name){
         int size;
         switch (name) {
             case "int":
@@ -98,11 +98,8 @@ public class Functions {
             case "float":
                 size = Float.SIZE;
                 break;
-            case "string":
-                size = Integer.SIZE;
-                break;
             default:
-                throw new Exception("type is not valid");
+                throw new RuntimeException("type is not valid");
 
         }
         return size;
