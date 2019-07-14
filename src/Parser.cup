@@ -4,6 +4,18 @@ import classes.*;
 import classes.function.*;
 import classes.declarations.*;
 import classes.expr.*;
+import classes.expr.assignments.*;
+import classes.expr.binaryExpr.*;
+import classes.expr.consts.*;
+import classes.expr.unaryExpr.*;
+import classes.expr.variables.*;
+import classes.expr.binaryExpr.arithmetic.*;
+import classes.expr.binaryExpr.conditional.*;
+import classes.statements.*;
+import classes.statements.conditionalSts.*;
+import classes.statements.loopSts.*;
+import classes.statements.conditionalSts.switchSts.*;
+
 import java.util.Collections;
 
 parser code {:
@@ -18,15 +30,16 @@ scan with {: return s.next_token(); :};
 
 /* Terminals (tokens returned by the scanner). */
 terminal            BREAK, CASE,CHAR,CONST,CONTINUE,DEFAULT,DOUBLE,ELSE,END,EXTERN,FUNCTION,FLOAT,FOR,IF,INT,LONG,RETURN,RECORD,SIZEOF,STRING,SWITCH,NULL_LITERAL,LPAREN,RPAREN,
-                    LBRACE,RBRACE,LBRACK,RBRACK,SEMICOLON,COMMA,DOT,EQ,GT,LT,COLON,EQEQ,LTEQ,GTEQ,NOTEQ,PLUS,PLUSPLUS,MINUSMINUS,MINUS,MULT,DIV,BITWISE_AND,BITWISE_OR,XOR,MOD,PLUSEQ,MINUSEQ,MULTEQ,DIVEQ,LOGICAL_AND,VOID,AUTO,OF,TILDA,LOGICAL_OR,BOOL,BEGIN,REPEAT,UNTIL,FOREACH,IN,UMINUS,DUMMY;
+                    LBRACE,RBRACE,LBRACK,RBRACK,SEMICOLON,COMMA,DOT,EQ,GT,LT,COLON,EQEQ,LTEQ,GTEQ,NOTEQ,PLUS,PLUSPLUS,MINUSMINUS,MINUS,MULT,DIV,BITWISE_AND,BITWISE_OR,XOR,MOD,
+                    PLUSEQ,MINUSEQ,MULTEQ,DIVEQ,LOGICAL_AND,VOID,AUTO,OF,TILDA,LOGICAL_OR,BOOL,BEGIN,REPEAT,UNTIL,FOREACH,IN,UMINUS,DUMMY,NOT;
 
-terminal Integer INTEGER_LITERAL;
-terminal Long LONG_LITERAL;
-terminal Float FLOAT_LITERAL;
-terminal Double DOUBLE_LITERAL;
-terminal Boolean BOOLEAN_LITERAL;
-terminal Character CHARACTER_LITERAL;
-terminal String IDENTIFIER,STRING_LITERAL;
+terminal INTEGER_LITERAL;
+terminal LONG_LITERAL;
+terminal FLOAT_LITERAL;
+terminal DOUBLE_LITERAL;
+terminal BOOLEAN_LITERAL;
+terminal CHARACTER_LITERAL;
+terminal IDENTIFIER,STRING_LITERAL;
 
 /* Non terminals */
 non terminal  program,func_extern,func_dcl,extern_dcl,arguments,type,struct_dec,var_dcl,var_dcl_cnt,block,statement,assignment,method_call,cond_stmt,var_dcls
@@ -127,55 +140,142 @@ var_dcl_cnts ::=	COMMA var_dcl_cnt:e1 var_dcl_cnts:e2
 var_dcl_cnt ::= IDENTIFIER:e1 {:RESULT = new VarDclPart((String)e1,null);:}
                 | IDENTIFIER:e1 EQ expr:e2 {:RESULT = new VarDclPart((String)e1,(Expr)e2);:};
 
-block ::= BEGIN block_content END;
+block ::= BEGIN block_content:e END {:RESULT = new Block((ArrayList <Operation>)e);:}
+        ;
 
-block_content ::= block_content var_dcl | block_content statement | ;
+block_content ::= block_content:e1 var_dcl:e2
+                {: ArrayList <Operation> a = (ArrayList <Operation>) e1 ;
+                 a.add((Operation)e2); RESULT = a;
+                :}
+                | block_content:e1 statement:e2
+                {:ArrayList <Operation> a = (ArrayList <Operation>) e1 ;
+                 a.add((Operation)e2); RESULT = a;
+                :}
+                | {:RESULT = new ArrayList<Operation>();:}
+                ;
 
-statement ::= assignment SEMICOLON  | method_call SEMICOLON | cond_stmt | loop_stmt | RETURN expr SEMICOLON | RETURN SEMICOLON | BREAK SEMICOLON | CONTINUE SEMICOLON;
+statement ::= assignment:e SEMICOLON    {:RESULT = new AssignmentSt((Assignment)e);:}
+            | method_call:e SEMICOLON   {:RESULT =e;:}
+            | cond_stmt:e               {:RESULT =e;:}
+            | loop_stmt:e               {:RESULT =e;:}
+            | RETURN expr:e SEMICOLON   {:RESULT = new Return((Expr)e); :}
+            | RETURN SEMICOLON          {:RESULT = new Return(); :}
+            | BREAK SEMICOLON           {:RESULT = new Break(); :}
+            | CONTINUE SEMICOLON        {:RESULT = new Continue();:}
+            ;
 
-assignment ::= variable short_form_operator expr;
+assignment ::= variable:e1 short_form_operator:e2 expr:e3
+            {:Assignment a = (Assignment) e2;
+              a.setDetail((Variable)e1,(Expr)e3);
+              RESULT = a;:}
+            ;
 
-short_form_operator ::= EQ | PLUSEQ | MINUSEQ | MULTEQ | DIVEQ ;
+short_form_operator ::= EQ {:RESULT = new Eq();:}
+                        |PLUSEQ {:RESULT = new PEq();:}
+                        | MINUSEQ {: RESULT = new MEq();:}
+                        | MULTEQ  {:RESULT = new MuEq();:}
+                        | DIVEQ {:RESULT = new DEq();:}
+                        ;
 
-method_call ::= IDENTIFIER LPAREN RPAREN | IDENTIFIER LPAREN parameters RPAREN;
+method_call ::= IDENTIFIER:e LPAREN RPAREN {:RESULT = new FuncCall((String)e,new Parameters());:}
+                | IDENTIFIER:e1 LPAREN parameters:e2 RPAREN
+                                        {:RESULT = new FuncCall((String)e1,(Parameters)e2);:}
+                ;
 
-parameters ::= expr | expr COMMA parameters ;
+parameters ::= expr:e   {:Parameters p = new Parameters(); p.add((Expr)e); RESULT = p;:}
+             | parameters:e1 COMMA expr:e2
+                        {:Parameters p = (Parameters)e1; p.add((Expr)e2); RESULT = p;:};
 
-cond_stmt ::= IF LPAREN expr RPAREN block | IF LPAREN expr RPAREN block ELSE block |
-              SWITCH LPAREN IDENTIFIER RPAREN OF COLON BEGIN cases DEFAULT COLON block END;
+cond_stmt ::= IF LPAREN expr:e1 RPAREN block:e2
+            {:RESULT = new If((Expr)e1,(Block)e2,null);:}
+            | IF LPAREN expr:e1 RPAREN block:e2 ELSE block:e3
+            {:RESULT = new If((Expr)e1,(Block)e2,(Block)e3);:}
+            | SWITCH LPAREN IDENTIFIER:e1 RPAREN OF COLON BEGIN cases:e2 DEFAULT COLON block:e3 END
+            {:RESULT = new Switch((Expr)e1, (ArrayList <Case>)e2, (Block) e3) ;:}
+            ;
 
-cases ::= cases CASE INT INTEGER_LITERAL COLON block | ;
+cases ::= cases:e1 CASE INTEGER_LITERAL:e2 COLON block:e3
+         {:ArrayList <Case> a = (ArrayList <Case>)e1;
+         a.add(new Case(new IntCExpr(Integer.parseInt((String)e2)),(Block)e3)); RESULT = a ;:}
+        | {:RESULT = new ArrayList<Case>();:}
+        ;
 
-loop_stmt ::= FOR LPAREN assignment SEMICOLON expr SEMICOLON assignment RPAREN block
-             |FOR LPAREN assignment SEMICOLON expr SEMICOLON expr RPAREN block
-             |FOR LPAREN assignment SEMICOLON expr SEMICOLON RPAREN block
-             |FOR LPAREN SEMICOLON expr SEMICOLON assignment RPAREN block
-             |FOR LPAREN SEMICOLON expr SEMICOLON expr RPAREN block
-             |REPEAT block UNTIL LPAREN expr RPAREN SEMICOLON
-             |FOREACH LPAREN IDENTIFIER IN IDENTIFIER RPAREN block
+loop_stmt ::= FOR LPAREN assignment:e1 SEMICOLON expr:e2 SEMICOLON assignment:e3 RPAREN block:e4
+             {:RESULT = new For((Assignment)e1,(Expr)e2,(Assignment)e3,(Block)e4);:}
+             |FOR LPAREN assignment:e1 SEMICOLON expr:e2 SEMICOLON expr:e3 RPAREN block:e4
+             {:RESULT = new For((Assignment)e1,(Expr)e2,(Expr)e3,(Block)e4);:}
+             |FOR LPAREN assignment:e1 SEMICOLON expr:e2 SEMICOLON RPAREN block:e3
+             {:RESULT = new For((Assignment)e1,(Expr)e2,null,(Block)e3);:}
+             |FOR LPAREN SEMICOLON expr:e1 SEMICOLON assignment:e2 RPAREN block:e3
+             {:RESULT = new For(null,(Expr)e1,(Assignment)e2,(Block)e3);:}
+             |FOR LPAREN SEMICOLON expr:e1 SEMICOLON expr:e2 RPAREN block:e3
+             {:RESULT = new For(null,(Expr)e1,(Expr)e2,(Block)e3);:}
+             |REPEAT block:e1 UNTIL LPAREN expr:e2 RPAREN SEMICOLON
+             {:RESULT = new Repeat((Block)e1,(Expr)e2);:}
+             |FOREACH LPAREN IDENTIFIER:e1 IN IDENTIFIER:e2 RPAREN block:e3
+             {:RESULT = new Foreach((String)e1, (String)e2,(Block)e3);:}
              ;
 
-expr ::= expr binary_op expr
-        | LPAREN expr RPAREN
-        | method_call
-        | variable
-        |const_val
-        | MINUS expr %prec UMINUS
-        | TILDA expr
-        | SIZEOF LPAREN type RPAREN
-        | variable MINUSMINUS %prec DUMMY
-        | MINUSMINUS variable
-        | PLUSPLUS variable
-        | variable PLUSPLUS %prec DUMMY ;
+expr ::= expr:e1 binary_op:e2 expr:e3 {:RESULT = ((BinaryExpr)e2).setExpressions((Expr)e1,(Expr)e3);:}
+        | LPAREN expr:e RPAREN        {:RESULT = new Parenthesized((Expr)e);:}
+        | method_call:e               {:RESULT = e;:}
+        | variable:e                  {:RESULT = e;:}
+        | const_val:e                 {:RESULT = e;:}
+        | MINUS expr:e                {:RESULT = new UMinus((Expr)e);:}
+           %prec UMINUS
+        | TILDA expr:e                {:RESULT = new UNot((Expr)e);:}
+        | NOT expr:e                  {:RESULT = new UNot((Expr)e); :}
+        | SIZEOF LPAREN type:e RPAREN {:RESULT = new SizeOfExpr((String)e); :}
+        | variable:e MINUSMINUS       {:RESULT = new MM((Expr)e);:}
+            %prec DUMMY
+        | MINUSMINUS variable:e       {:RESULT = new MM((Expr)e);:}
+        | PLUSPLUS variable:e         {:RESULT = new PP((Expr)e);:}
+        | variable:e PLUSPLUS         {:RESULT = new PP((Expr)e);:}
+            %prec DUMMY ;
 
-variable ::= IDENTIFIER |IDENTIFIER filled_brackets| variable DOT IDENTIFIER  ;
+variable ::= IDENTIFIER:e {:RESULT = new SimpleVar((String)e);:}
+            |IDENTIFIER:e1 filled_brackets:e2
+                          {:RESULT = new ArrayVar((String)e1,(ArrayList <Expr>)e2);:}
+            | variable:e1 DOT IDENTIFIER:e2
+                          {:RESULT = new StructVar((Variable)e1, (String)e2);:}
+            ;
 
-binary_op ::= arithmatic | conditional;
+filled_brackets ::= filled_brackets:e1 LBRACK expr:e2 RBRACK
+                    {:ArrayList<Expr> a=(ArrayList <Expr>)e1;a.add((Expr)e2); RESULT = a;:}
+                    | LBRACK expr:e RBRACK
+                    {:ArrayList<Expr> a=new ArrayList<>();a.add((Expr)e); RESULT = a;:}
+                    ;
 
-arithmatic ::= PLUS | MINUS | MULT | DIV | MOD | BITWISE_AND | BITWISE_OR | XOR;
+binary_op ::= arithmatic:e  {:RESULT = e;:}
+            | conditional:e {:RESULT = e;:}
+            ;
 
-conditional ::= EQEQ | LTEQ | GTEQ | NOTEQ | GT | LT | LOGICAL_AND | LOGICAL_OR ;
+arithmatic ::= PLUS         {:RESULT = new Plus();:}
+            | MINUS         {:RESULT = new Minus();:}
+            | MULT          {:RESULT = new Mult();:}
+            | DIV           {:RESULT = new Divide();:}
+            | MOD           {:RESULT = new Mod();:}
+            | BITWISE_AND   {:RESULT = new BitwiseAnd();:}
+            | BITWISE_OR    {:RESULT = new BitwiseOr();:}
+            | XOR           {:RESULT = new Xor();:}
+            ;
 
-const_val ::= INTEGER_LITERAL | LONG_LITERAL | FLOAT_LITERAL | DOUBLE_LITERAL | BOOLEAN_LITERAL | CHARACTER_LITERAL | STRING_LITERAL;
+conditional ::= EQEQ        {:RESULT = new EqEq();:}
+            | LTEQ          {:RESULT = new LTEq();:}
+            | GTEQ          {:RESULT = new GTEq();:}
+            | NOTEQ         {:RESULT = new NotEq();:}
+            | GT            {:RESULT = new GT();:}
+            | LT            {:RESULT = new LT();:}
+            | LOGICAL_AND   {:RESULT = new And();:}
+            | LOGICAL_OR    {:RESULT = new Or();:}
+            ;
 
-filled_brackets ::= LBRACK expr RBRACK filled_brackets | LBRACK expr RBRACK ;
+const_val ::= INTEGER_LITERAL:e   {:RESULT = new IntCExpr(Integer.parseInt((String)e));:}
+            | LONG_LITERAL:e      {:RESULT = new LongCExpr(Long.parseLong((String)e));:}
+            | FLOAT_LITERAL:e     {:RESULT = new FloatCExpr(Float.parseFloat((String)e));:}
+            | DOUBLE_LITERAL:e    {:RESULT = new DoubleCExpr(Double.parseDouble((String)e));:}
+            | BOOLEAN_LITERAL:e   {:RESULT = new BooleanCExpr(Boolean.parseBoolean((String)e));:}
+            | CHARACTER_LITERAL:e {:RESULT = new CharCExpr(((String)e).charAt(0));:}
+            | STRING_LITERAL:e    {:RESULT = new StringCExpr((String)e);:}
+            ;
+

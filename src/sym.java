@@ -6,7 +6,7 @@
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int IDENTIFIER = 75;
+  public static final int IDENTIFIER = 76;
   public static final int BOOL = 61;
   public static final int DUMMY = 68;
   public static final int GT = 34;
@@ -18,7 +18,7 @@ public class sym {
   public static final int RBRACK = 29;
   public static final int SIZEOF = 20;
   public static final int COMMA = 31;
-  public static final int DOUBLE_LITERAL = 72;
+  public static final int DOUBLE_LITERAL = 73;
   public static final int RBRACE = 27;
   public static final int RPAREN = 25;
   public static final int LBRACK = 28;
@@ -27,17 +27,18 @@ public class sym {
   public static final int LBRACE = 26;
   public static final int LPAREN = 24;
   public static final int LOGICAL_OR = 60;
-  public static final int INTEGER_LITERAL = 69;
+  public static final int INTEGER_LITERAL = 70;
+  public static final int NOT = 69;
   public static final int TILDA = 59;
   public static final int FLOAT = 13;
   public static final int RECORD = 19;
   public static final int EQ = 33;
-  public static final int BOOLEAN_LITERAL = 73;
+  public static final int BOOLEAN_LITERAL = 74;
   public static final int MOD = 50;
   public static final int LOGICAL_AND = 55;
+  public static final int LONG_LITERAL = 71;
   public static final int LONG = 17;
   public static final int PLUS = 41;
-  public static final int LONG_LITERAL = 70;
   public static final int CHAR = 4;
   public static final int SWITCH = 22;
   public static final int FOR = 14;
@@ -52,7 +53,7 @@ public class sym {
   public static final int DOT = 32;
   public static final int INT = 16;
   public static final int NULL_LITERAL = 23;
-  public static final int STRING_LITERAL = 76;
+  public static final int STRING_LITERAL = 77;
   public static final int EQEQ = 37;
   public static final int EOF = 0;
   public static final int SEMICOLON = 30;
@@ -61,7 +62,7 @@ public class sym {
   public static final int MULTEQ = 53;
   public static final int REPEAT = 63;
   public static final int MINUS = 44;
-  public static final int FLOAT_LITERAL = 71;
+  public static final int FLOAT_LITERAL = 72;
   public static final int LTEQ = 38;
   public static final int IN = 66;
   public static final int error = 1;
@@ -73,7 +74,7 @@ public class sym {
   public static final int END = 10;
   public static final int COLON = 36;
   public static final int FOREACH = 65;
-  public static final int CHARACTER_LITERAL = 74;
+  public static final int CHARACTER_LITERAL = 75;
   public static final int BEGIN = 62;
   public static final int CASE = 3;
   public static final int PLUSPLUS = 42;
@@ -153,6 +154,7 @@ public class sym {
   "IN",
   "UMINUS",
   "DUMMY",
+  "NOT",
   "INTEGER_LITERAL",
   "LONG_LITERAL",
   "FLOAT_LITERAL",

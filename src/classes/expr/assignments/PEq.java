@@ -1,12 +1,10 @@
 package classes.expr.assignments;
 
+import classes.expr.Assignment;
 import classes.expr.Expr;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
-public class PEq extends Expr {
-    @Override
-    public void compile(MethodVisitor mv, ClassVisitor cv) {
+public class PEq extends Assignment {
 
-    }
 }

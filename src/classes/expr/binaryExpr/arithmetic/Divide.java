@@ -1,14 +1,12 @@
-package classes.expr;
+package classes.expr.binaryExpr.arithmetic;
 
-import classes.Part;
+import classes.expr.binaryExpr.BinaryExpr;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
-import java.util.ArrayList;
-
-public class Parameters implements Part {
+public class Divide extends BinaryExpr {
     @Override
     public void compile(MethodVisitor mv, ClassVisitor cv) {
-        //TODO
+
     }
 }

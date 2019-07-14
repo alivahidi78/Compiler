@@ -1,10 +1,14 @@
-package classes.expr.binaryExpr.arithmetic;
+package classes.expr.unaryExpr;
 
-import classes.expr.binaryExpr.BinaryExpr;
+import classes.expr.Expr;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
-public class And extends BinaryExpr {
+public class UNot extends UnaryExpr {
+    public UNot(Expr e) {
+        //TODO
+    }
+
     @Override
     public void compile(MethodVisitor mv, ClassVisitor cv) {
 

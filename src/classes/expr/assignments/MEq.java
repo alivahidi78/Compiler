@@ -5,6 +5,6 @@ import classes.expr.Expr;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
-public class MuEq extends Assignment {
+public class MEq extends Assignment {
 
 }

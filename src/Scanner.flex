@@ -154,7 +154,7 @@ SingleCharacter = [^\r\n\'\\]
   "*="                           { return symbol(sym.MULTEQ); }
   "/="                           { return symbol(sym.DIVEQ); }
   "and"                          { return symbol(sym.LOGICAL_AND); }
-/*"not"                          { return symbol(sym.NOT); }*/
+  "not"                          { return symbol(sym.NOT); }
   "++"                           { return symbol(sym.PLUSPLUS); }
   "--"                           { return symbol(sym.MINUSMINUS); }
   "or"                           { return symbol(sym.LOGICAL_OR); }
