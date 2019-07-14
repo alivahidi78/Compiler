@@ -1,22 +1,28 @@
 package classes.function;
 
-import classes.Part;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
+import classes.help.Functions;
 import org.objectweb.asm.Type;
 
-public class Argument extends Part {
-    public Argument(String type, String name, int dims) {
-        //TODO
-    }
+public class Argument {
+    private Type type;
+    private String name;
+    private Integer dimensions;
 
-    @Override
-    public void compile(MethodVisitor mv, ClassVisitor cv) {
-        //TODO
+    public Argument(String type, String name, int dims) {
+        this.type = Functions.toType(type);
+        this.name = name;
+        this.dimensions = dims;
     }
 
     public Type getType() {
-        return null;
-        //TODO
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getDimensions() {
+        return dimensions;
     }
 }

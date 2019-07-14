@@ -1545,7 +1545,7 @@ public class Scanner implements java_cup.runtime.Scanner {
             // fall through
           case 172: break;
           case 66: 
-            { return symbol(sym.INT);
+            { return symbol(sym.INT,"int");
             } 
             // fall through
           case 173: break;
@@ -1617,7 +1617,7 @@ public class Scanner implements java_cup.runtime.Scanner {
             // fall through
           case 186: break;
           case 80: 
-            { return symbol(sym.BOOL);
+            { return symbol(sym.BOOL,"bool");
             } 
             // fall through
           case 187: break;
@@ -1642,7 +1642,7 @@ public class Scanner implements java_cup.runtime.Scanner {
             // fall through
           case 191: break;
           case 85: 
-            { return symbol(sym.CHAR);
+            { return symbol(sym.CHAR,"char");
             } 
             // fall through
           case 192: break;
@@ -1652,7 +1652,7 @@ public class Scanner implements java_cup.runtime.Scanner {
             // fall through
           case 193: break;
           case 87: 
-            { return symbol(sym.LONG);
+            { return symbol(sym.LONG,"long");
             } 
             // fall through
           case 194: break;
@@ -1687,7 +1687,7 @@ public class Scanner implements java_cup.runtime.Scanner {
             // fall through
           case 200: break;
           case 94: 
-            { return symbol(sym.FLOAT);
+            { return symbol(sym.FLOAT,"float");
             } 
             // fall through
           case 201: break;
@@ -1717,7 +1717,7 @@ public class Scanner implements java_cup.runtime.Scanner {
             // fall through
           case 206: break;
           case 100: 
-            { return symbol(sym.STRING);
+            { return symbol(sym.STRING,"string");
             } 
             // fall through
           case 207: break;
@@ -1727,7 +1727,7 @@ public class Scanner implements java_cup.runtime.Scanner {
             // fall through
           case 208: break;
           case 102: 
-            { return symbol(sym.DOUBLE);
+            { return symbol(sym.DOUBLE,"double");
             } 
             // fall through
           case 209: break;

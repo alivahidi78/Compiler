@@ -90,25 +90,25 @@ SingleCharacter = [^\r\n\'\\]
   "begin"                        { return symbol(sym.BEGIN); }
   "break"                        { return symbol(sym.BREAK); }
   "case"                         { return symbol(sym.CASE); }
-  "char"                         { return symbol(sym.CHAR); }
+  "char"                         { return symbol(sym.CHAR,"char"); }
   "const"                        { return symbol(sym.CONST); }
   "continue"                     { return symbol(sym.CONTINUE); }
   "default"                      { return symbol(sym.DEFAULT); }
-  "double"                       { return symbol(sym.DOUBLE); }
+  "double"                       { return symbol(sym.DOUBLE,"double"); }
   "else"                         { return symbol(sym.ELSE); }
   "end"                          { return symbol(sym.END); }
   "extern"                       { return symbol(sym.EXTERN); }
   "function"                     { return symbol(sym.FUNCTION); }
-  "float"                        { return symbol(sym.FLOAT); }
+  "float"                        { return symbol(sym.FLOAT,"float"); }
   "for"                          { return symbol(sym.FOR); }
   "if"                           { return symbol(sym.IF); }
-  "int"                          { return symbol(sym.INT); }
-  "long"                         { return symbol(sym.LONG); }
-  "bool"                         { return symbol(sym.BOOL); }
+  "int"                          { return symbol(sym.INT,"int"); }
+  "long"                         { return symbol(sym.LONG,"long"); }
+  "bool"                         { return symbol(sym.BOOL,"bool"); }
   "return"                       { return symbol(sym.RETURN); }
   "record"                       { return symbol(sym.RECORD); }
   "sizeof"                       { return symbol(sym.SIZEOF); }
-  "string"                       { return symbol(sym.STRING); }
+  "string"                       { return symbol(sym.STRING,"string"); }
   "switch"                       { return symbol(sym.SWITCH); }
 
   /* boolean literals */
