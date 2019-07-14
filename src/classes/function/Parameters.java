@@ -24,4 +24,8 @@ public class Parameters{
     public ArrayList<Expr> getExpressions() {
         return expressions;
     }
+
+    public void add(Expr e) {
+        expressions.add(e);
+    }
 }

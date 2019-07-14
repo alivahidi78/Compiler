@@ -198,7 +198,7 @@ cond_stmt ::= IF LPAREN expr:e1 RPAREN block:e2
 
 cases ::= cases:e1 CASE INTEGER_LITERAL:e2 COLON block:e3
          {:ArrayList <Case> a = (ArrayList <Case>)e1;
-         a.add(new Case(new IntCExpr(Integer.parseInt((String)e2)),(Block)e3)); RESULT = a ;:}
+         a.add(new Case(new IntCExpr((Integer)e2),(Block)e3)); RESULT = a ;:}
         | {:RESULT = new ArrayList<Case>();:}
         ;
 
@@ -272,12 +272,12 @@ conditional ::= EQEQ        {:RESULT = new EqEq();:}
             | LOGICAL_OR    {:RESULT = new Or();:}
             ;
 
-const_val ::= INTEGER_LITERAL:e   {:RESULT = new IntCExpr(Integer.parseInt((String)e));:}
-            | LONG_LITERAL:e      {:RESULT = new LongCExpr(Long.parseLong((String)e));:}
-            | FLOAT_LITERAL:e     {:RESULT = new FloatCExpr(Float.parseFloat((String)e));:}
-            | DOUBLE_LITERAL:e    {:RESULT = new DoubleCExpr(Double.parseDouble((String)e));:}
-            | BOOLEAN_LITERAL:e   {:RESULT = new BooleanCExpr(Boolean.parseBoolean((String)e));:}
-            | CHARACTER_LITERAL:e {:RESULT = new CharCExpr(((String)e).charAt(0));:}
+const_val ::= INTEGER_LITERAL:e   {:RESULT = new IntCExpr((Integer) e);:}
+            | LONG_LITERAL:e      {:RESULT = new LongCExpr((Long) e);:}
+            | FLOAT_LITERAL:e     {:RESULT = new FloatCExpr((Float) e);:}
+            | DOUBLE_LITERAL:e    {:RESULT = new DoubleCExpr((Double)e);:}
+            | BOOLEAN_LITERAL:e   {:RESULT = new BooleanCExpr((Boolean)e);:}
+            | CHARACTER_LITERAL:e {:RESULT = new CharCExpr((Character)e);:}
             | STRING_LITERAL:e    {:RESULT = new StringCExpr((String)e);:}
             ;
 

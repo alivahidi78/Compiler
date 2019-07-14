@@ -5,6 +5,7 @@ import org.objectweb.asm.MethodVisitor;
 
 public class StructVar extends Variable {
     public StructVar(Variable v, String name) {
+        super(name);
         //TODO
     }
 

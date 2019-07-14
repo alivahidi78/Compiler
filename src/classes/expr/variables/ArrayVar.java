@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class ArrayVar extends Variable {
     public ArrayVar(String name, ArrayList<Expr> pars) {
+        super(name);
         //TODO
     }
 
