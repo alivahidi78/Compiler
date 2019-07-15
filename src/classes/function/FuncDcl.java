@@ -51,20 +51,20 @@ public class FuncDcl extends Part {
 
     @Override
     public void compile(MethodVisitor mv, ClassVisitor cv) {
-        //FIXME
+        SymbolTable.getInstance().addFrame(ScopeType.FUNCTION);
+        SymbolTable.getInstance().setLastFunc(this);
         MethodVisitor newMv = cv.visitMethod(ACC_PUBLIC + ACC_STATIC,
                 name, this.signature, null, null);
         newMv.visitCode();
-        SymbolTable.getInstance().addFrame(ScopeType.FUNCTION);
-        SymbolTable.getInstance().setLastFunc(this);
         for (Argument f : args){
-                SimpleVarDcl v = new SimpleVarDcl(false,false,f.getType(),f.getName(),null);
+                SimpleVarDcl v = new SimpleVarDcl(false,false,f.getType(),
+                        f.getName(),null);
                 v.compile(newMv,cv);
         }
 
         block.compile(newMv,cv);
         if(returns.size() == 0){
-            if (type.equals(org.objectweb.asm.Type.VOID_TYPE)){
+            if (type.equals(Type.VOID_TYPE)){
                 newMv.visitInsn(Opcodes.RETURN);
             }else{
                 throw new RuntimeException("no return type seen");

@@ -1,7 +1,7 @@
 function int main()
-begin 
+begin
 int a;
-a = test(2);
+test(2);
 end
 
 function test(int num)

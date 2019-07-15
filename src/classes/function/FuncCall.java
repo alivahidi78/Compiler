@@ -1,5 +1,6 @@
 package classes.function;
 
+import classes.Operation;
 import classes.expr.Expr;
 import classes.help.Constants;
 import classes.help.SymbolTable;
@@ -9,10 +10,11 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
-public class FuncCall extends Expr{
+public class FuncCall extends Operation {
     String id;
     Parameters parameters ;
     FuncDcl funcDcl;
+    Type type;
 
     public FuncCall(String id, Parameters parameters) {
         this.id = id;
@@ -36,7 +38,7 @@ public class FuncCall extends Expr{
             typesInComped[i] = parameters.getExpressions().get(i).getType();
         }
         this.funcDcl = SymbolTable.getInstance().getFunction(id, typesInComped);
-        this.type = funcDcl.getType();
+        type = funcDcl.getType();
         if(parameters.getExpressions().size() != funcDcl.getArgTypes().length){
             throw new RuntimeException("the static array doesn't have any signature like this");
         }

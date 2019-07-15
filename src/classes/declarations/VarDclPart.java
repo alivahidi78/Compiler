@@ -5,7 +5,7 @@ import classes.expr.Expr;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
-public class VarDclPart extends Part {
+public class VarDclPart {
     private String name;
     private Expr expr;
 
@@ -15,11 +15,6 @@ public class VarDclPart extends Part {
 
     public Expr getExpr() {
         return expr;
-    }
-
-    @Override
-    public void compile(MethodVisitor mv, ClassVisitor cv) {
-        //TODO
     }
 
     public VarDclPart(String name, Expr expr) {

@@ -88,7 +88,15 @@ public class SymbolTable {
     }
 
     public Descriptor getDescriptor(String name) {
-        return null;
+//        int from = frameStack.size();
+//        while (from != 0) {
+//            from--;
+//            if (frameStack.get(from).containsKey(name)) {
+//                return frameStack.get(from).get(name);
+//            }
+//        }
+//        throw new RuntimeException();
+        return null; //TODO
     }
 
     public boolean canHaveBreak(){
@@ -114,6 +122,6 @@ public class SymbolTable {
     }
 
     public Frame getLastFrame() {
-        return null;
+        return frameStack.peek();
     }
 }

@@ -2,6 +2,7 @@ package classes.expr.variables;
 
 import classes.DSCPs.Descriptor;
 import classes.expr.Expr;
+import classes.help.SymbolTable;
 
 public abstract class Variable extends Expr {
     protected String name;
@@ -11,6 +12,6 @@ public abstract class Variable extends Expr {
     }
 
     public Descriptor getDSCP() {
-        return null;//SymbolTable.getInstance().getDescriptor(name) TODO
+        return SymbolTable.getInstance().getDescriptor(name);
     }
 }
