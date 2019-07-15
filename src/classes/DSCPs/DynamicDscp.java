@@ -10,6 +10,15 @@ public class DynamicDscp extends Descriptor {
         this.index = index;
     }
 
+    DynamicDscp(boolean isConst, Class<?> clazz, String name, int index) {
+        super(isConst, clazz, name);
+        this.index = index;
+    }
+
+    DynamicDscp(boolean isConst, String typeS, String name, int index) {
+        super(isConst, typeS, name);
+        this.index = index;
+    }
 
     public int getIndex() {
         return index;

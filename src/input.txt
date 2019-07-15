@@ -1,5 +1,6 @@
 function int main()
 begin
+test(2);
 return 0;
 end
 

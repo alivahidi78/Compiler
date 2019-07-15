@@ -102,8 +102,9 @@ public class SymbolTable {
         return frames.get(frames.size() - 1).getScopeType() == ScopeType.LOOP || frames.get(frames.size() - 1).getScopeType() == ScopeType.SWITCH;
     }
 
-    public int returnNewIndex(){
-        return 0;
+    public int returnNewIndex() {
+        getLastFrame().addIndex(1);
+        return getLastFrame().getCurrent_index();
     }
 
     public void setLabelFirst(Label label) {
@@ -120,6 +121,8 @@ public class SymbolTable {
     }
 
     public Frame getLastFrame() {
+        if (frames.size() == 0)
+            throw new RuntimeException("no frames exist");
         return frames.get(frames.size() - 1);
     }
 }

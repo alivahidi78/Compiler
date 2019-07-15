@@ -55,4 +55,6 @@ public class Frame {
     public void setEndLabel(Label endLabel) {
         this.endLabel = endLabel;
     }
+
+    public void addIndex(int value){this.current_index += value;}
 }

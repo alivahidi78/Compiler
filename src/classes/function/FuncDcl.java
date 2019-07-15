@@ -67,7 +67,7 @@ public class FuncDcl extends Part {
             if (type.equals(Type.VOID_TYPE)){
                 newMv.visitInsn(Opcodes.RETURN);
             }else{
-                throw new RuntimeException("no return type seen");
+                throw new RuntimeException("no return type");
             }
         }
         newMv.visitMaxs(1, 1);

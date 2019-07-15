@@ -37,7 +37,7 @@ public class SimpleVarDcl extends Declaration {
             fv.visitEnd();
         } else {
             Frame frame = SymbolTable.getInstance().getLastFrame();
-            frame.setCurrent_index(frame.getCurrent_index() + 1);
+            frame.addIndex(1);
             descriptor = new DynamicDscp(isConst, type, name, frame.getCurrent_index());
             DynamicDscp dd = (DynamicDscp) descriptor;
             if (expr != null && expr.getType().equals(getType())) {
