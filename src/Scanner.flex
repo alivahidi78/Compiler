@@ -157,7 +157,7 @@ SingleCharacter = [^\r\n\'\\]
   "++"                           { return symbol(sym.PLUSPLUS); }
   "--"                           { return symbol(sym.MINUSMINUS); }
   "or"                           { return symbol(sym.LOGICAL_OR); }
-  "void"                         { return symbol(sym.VOID); }
+  "void"                         { return symbol(sym.VOID,"void"); }
   "auto"                         { return symbol(sym.AUTO); }
   "of"                           { return symbol(sym.OF); }
   "until"                        { return symbol(sym.UNTIL); }

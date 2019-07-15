@@ -1657,7 +1657,7 @@ public class Scanner implements java_cup.runtime.Scanner {
             // fall through
           case 194: break;
           case 88: 
-            { return symbol(sym.VOID);
+            { return symbol(sym.VOID,"void");
             } 
             // fall through
           case 195: break;

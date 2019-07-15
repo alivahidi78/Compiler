@@ -14,6 +14,12 @@ public class FuncCall extends Operation {
     String id;
     Parameters parameters ;
     FuncDcl funcDcl;
+
+    @Override
+    public Type getType() {
+        return type;
+    }
+
     Type type;
 
     public FuncCall(String id, Parameters parameters) {

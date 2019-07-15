@@ -1,4 +1,6 @@
 package classes;
 
-public abstract class Operation extends Part {
+import classes.expr.Expr;
+
+public abstract class Operation extends Expr {
 }
