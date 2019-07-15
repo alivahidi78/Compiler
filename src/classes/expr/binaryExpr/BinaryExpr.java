@@ -13,7 +13,7 @@ public abstract class BinaryExpr extends Expr {
         return type = exp1.getType();
     }
 
-    public BinaryExpr setBinaryExpr(Expr exp1, Expr exp2){
+    public BinaryExpr setExpressions(Expr exp1, Expr exp2){
         this.exp1=exp1;
         this.exp2=exp2;
         return this;

@@ -15,6 +15,7 @@ import classes.statements.*;
 import classes.statements.conditionalSts.*;
 import classes.statements.loopSts.*;
 import classes.statements.conditionalSts.switchSts.*;
+import classes.help.*;
 
 import java.util.Collections;
 
@@ -43,10 +44,11 @@ terminal IDENTIFIER,STRING_LITERAL;
 
 /* Non terminals */
 non terminal  program,func_extern,func_dcl,extern_dcl,arguments,type,struct_dec,var_dcl,var_dcl_cnt,block,statement,assignment,method_call,cond_stmt,var_dcls
-              ,loop_stmt,expr,variable,binary_op,arithmatic,conditional,const_val,filled_brackets,square_brackets,argument_helper,var_dcl_cnts,cases,parameters,short_form_operator,block_content;
+              ,loop_stmt,expr,variable,binary_op,arithmatic,conditional,const_val,filled_brackets,square_brackets,argument_helper,var_dcl_cnts,cases,parameters,short_form_operator,block_content,
+              flip_scope;
 
 /* Precedences */
-precedence right DUMMY;
+
 precedence right EQ;
 precedence left LOGICAL_AND, LOGICAL_OR;
 precedence left BITWISE_OR;
@@ -60,6 +62,7 @@ precedence right TILDA;
 precedence left UMINUS;
 precedence left DOT ;
 precedence left LBRACK, RBRACK, LPAREN ,RPAREN;
+precedence right DUMMY;
 
 
 /* The grammar rules */
@@ -74,16 +77,18 @@ func_extern ::= func_dcl:e {: RESULT = e;:}
             | extern_dcl:e {: RESULT = e;:}
             ;
 
-func_dcl ::=  FUNCTION type:e1 IDENTIFIER:e2 LPAREN RPAREN SEMICOLON
+func_dcl ::= flip_scope FUNCTION type:e1 IDENTIFIER:e2 LPAREN RPAREN SEMICOLON flip_scope
               {:RESULT = new FuncDcl((String)e1, (String)e2,new ArrayList<Argument>(), null);:}
-            | FUNCTION type:e1 IDENTIFIER:e2 LPAREN RPAREN block:e3
+            |flip_scope FUNCTION type:e1 IDENTIFIER:e2 LPAREN RPAREN block:e3 flip_scope
               {:RESULT = new FuncDcl((String)e1, (String)e2,new ArrayList<Argument>(), (Block)e3);:}
-            | FUNCTION type:e1 IDENTIFIER:e2 LPAREN arguments:e3 RPAREN SEMICOLON
+            |flip_scope FUNCTION type:e1 IDENTIFIER:e2 LPAREN arguments:e3 RPAREN SEMICOLON flip_scope
               {:RESULT = new FuncDcl((String)e1, (String)e2, (ArrayList<Argument>)e3,null);:}
-            | FUNCTION type:e1 IDENTIFIER:e2 LPAREN arguments:e3 RPAREN block:e4
+            |flip_scope FUNCTION type:e1 IDENTIFIER:e2 LPAREN arguments:e3 RPAREN block:e4 flip_scope
               {:RESULT = new FuncDcl((String)e1, (String)e2, (ArrayList<Argument>)e3, (Block)e4);:}
             ;
 
+flip_scope	::=		{: SymbolTable.getInstance().flipScope();:}
+				;
 extern_dcl ::= EXTERN type:e1 IDENTIFIER:e2 SEMICOLON
               {:RESULT = new ExternDcl((String)e1,(String)e2);:}
             ;

@@ -8,13 +8,18 @@ import classes.declarations.Struct;
 import classes.function.FuncDcl;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Stack;
 
 public class SymbolTable {
     private static SymbolTable instance = new SymbolTable();
+
+    public void flipScope() {
+        isCurrentScopeGlobal = !isCurrentScopeGlobal;
+    }
+
     private boolean isCurrentScopeGlobal = true;
     private HashMap<String, List<FuncDcl>> functions = new HashMap<>();
     private HashMap<String, List<Struct>> structs = new HashMap<>();
@@ -27,7 +32,7 @@ public class SymbolTable {
     }
 
     private SymbolTable() {
-        Frame baseFrame = new Frame(1,null);//There is Always a (String... args) in main Function.
+        Frame baseFrame = new Frame(1, null);//There is Always a (String... args) in main Function.
         frames.add(baseFrame);
     }
 
@@ -76,11 +81,12 @@ public class SymbolTable {
         if (descriptor instanceof DynamicDscp)
             frames.get(frames.size() - 1).setCurrent_index(frames.get(frames.size() - 1).getCurrent_index() + descriptor.getType().getSize() - 1);
     }
+
     public void addFrame(ScopeType scopeType) {
         Frame frame = null;
-        if (scopeType != ScopeType.FUNCTION){
+        if (scopeType != ScopeType.FUNCTION) {
             frame = new Frame(frames.get(frames.size() - 1).getCurrent_index(), scopeType);
-        }else {
+        } else {
             frame = new Frame(0, scopeType);
         }
         frames.add(frame);
@@ -90,14 +96,14 @@ public class SymbolTable {
         int from = frames.size();
         while (from != 0) {
             from--;
-            for (Descriptor descriptor : frames.get(from).getDescriptors()){
+            for (Descriptor descriptor : frames.get(from).getDescriptors()) {
                 if (descriptor.getName().equals(name)) return descriptor;
             }
         }
         throw new RuntimeException("DSCP not found");
     }
 
-    public boolean canHaveBreak(){
+    public boolean canHaveBreak() {
         //fixme
         return frames.get(frames.size() - 1).getScopeType() == ScopeType.LOOP || frames.get(frames.size() - 1).getScopeType() == ScopeType.SWITCH;
     }
@@ -110,8 +116,9 @@ public class SymbolTable {
     public void setLabelFirst(Label label) {
     }
 
-    public Label getLabelLast(){
-        return null;}
+    public Label getLabelLast() {
+        return null;
+    }
 
     public void setLabelLast(Label label) {
     }
