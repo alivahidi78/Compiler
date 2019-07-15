@@ -6,12 +6,13 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
 public class AssignmentSt extends Operation {
+    Assignment a;
     public AssignmentSt(Assignment assignment) {
-        //TODO
+        this.a = assignment;
     }
 
     @Override
     public void compile(MethodVisitor mv, ClassVisitor cv) {
-        //TODO
+        a.compile(mv,cv);
     }
 }

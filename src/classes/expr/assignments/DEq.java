@@ -7,4 +7,8 @@ import org.objectweb.asm.MethodVisitor;
 
 public class DEq extends Assignment {
 
+    @Override
+    public void compile(MethodVisitor mv, ClassVisitor cv) {
+        //TODO
+    }
 }
