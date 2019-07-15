@@ -9,7 +9,7 @@ import classes.expr.variables.SimpleVar;
 import classes.help.Functions;
 import classes.help.SymbolTable;
 import classes.statements.Return;
-import jdk.internal.org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -72,7 +72,7 @@ public class FuncDcl extends Part {
         }
         newMv.visitMaxs(1, 1);
         newMv.visitEnd();
-        SymbolTable.getInstance().getFrameStack().pop();
+        SymbolTable.getInstance().getFrames().remove(SymbolTable.getInstance().getFrames().size() - 1);
 
     }
 

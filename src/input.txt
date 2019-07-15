@@ -1,10 +1,9 @@
 function int main()
 begin
-int a;
-test(2);
+return 0;
 end
 
-function test(int num)
-begin 
+function int test(int num)
+begin
 return num;
 end

@@ -6,9 +6,8 @@ import classes.Frame;
 import classes.ScopeType;
 import classes.declarations.Struct;
 import classes.function.FuncDcl;
-import jdk.internal.org.objectweb.asm.Label;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +18,7 @@ public class SymbolTable {
     private boolean isCurrentScopeGlobal = true;
     private HashMap<String, List<FuncDcl>> functions = new HashMap<>();
     private HashMap<String, List<Struct>> structs = new HashMap<>();
-    private Stack<Frame> frameStack = new Stack<>();
+    private ArrayList<Frame> frames = new ArrayList<>();
     private FuncDcl lastFunc;
 
 
@@ -29,7 +28,7 @@ public class SymbolTable {
 
     private SymbolTable() {
         Frame baseFrame = new Frame(1,null);//There is Always a (String... args) in main Function.
-        frameStack.add(baseFrame);
+        frames.add(baseFrame);
     }
 
     public boolean isCurrentScopeGlobal() {
@@ -60,8 +59,8 @@ public class SymbolTable {
 
     }
 
-    public Stack<Frame> getFrameStack() {
-        return frameStack;
+    public ArrayList<Frame> getFrames() {
+        return frames;
     }
 
     public FuncDcl getLastFunc() {
@@ -73,35 +72,34 @@ public class SymbolTable {
     }
 
     public void addVariable(Descriptor descriptor) {
-        frameStack.peek().getDescriptors().add(descriptor);
+        frames.get(frames.size() - 1).getDescriptors().add(descriptor);
         if (descriptor instanceof DynamicDscp)
-            frameStack.peek().setCurrent_index(frameStack.peek().getCurrent_index() + descriptor.getType().getSize() - 1);
+            frames.get(frames.size() - 1).setCurrent_index(frames.get(frames.size() - 1).getCurrent_index() + descriptor.getType().getSize() - 1);
     }
     public void addFrame(ScopeType scopeType) {
         Frame frame = null;
         if (scopeType != ScopeType.FUNCTION){
-            frame = new Frame(frameStack.peek().getCurrent_index(), scopeType);
+            frame = new Frame(frames.get(frames.size() - 1).getCurrent_index(), scopeType);
         }else {
             frame = new Frame(0, scopeType);
         }
-        frameStack.add(frame);
+        frames.add(frame);
     }
 
     public Descriptor getDescriptor(String name) {
-//        int from = frameStack.size();
-//        while (from != 0) {
-//            from--;
-//            if (frameStack.get(from).containsKey(name)) {
-//                return frameStack.get(from).get(name);
-//            }
-//        }
-//        throw new RuntimeException();
-        return null; //TODO
+        int from = frames.size();
+        while (from != 0) {
+            from--;
+            for (Descriptor descriptor : frames.get(from).getDescriptors()){
+                if (descriptor.getName().equals(name)) return descriptor;
+            }
+        }
+        throw new RuntimeException("DSCP not found");
     }
 
     public boolean canHaveBreak(){
         //fixme
-        return frameStack.peek().getScopeType() == ScopeType.LOOP || frameStack.peek().getScopeType() == ScopeType.SWITCH;
+        return frames.get(frames.size() - 1).getScopeType() == ScopeType.LOOP || frames.get(frames.size() - 1).getScopeType() == ScopeType.SWITCH;
     }
 
     public int returnNewIndex(){
@@ -122,6 +120,6 @@ public class SymbolTable {
     }
 
     public Frame getLastFrame() {
-        return frameStack.peek();
+        return frames.get(frames.size() - 1);
     }
 }
